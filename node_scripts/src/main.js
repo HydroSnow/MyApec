@@ -4,16 +4,19 @@ const mysql = require('mysql');
 const fs = require('fs');
 
 const web = require('./web.js');
+const scraping = require('./scraping.js');
 
 let settings;
 let database;
 let keywords;
+let browser;
 
-function setup() {
+async function setup() {
     console.log("Loading...");
     let json = fs.readFileSync("settings.json", "utf8");
     settings = JSON.parse(json);
     database = mysql.createPool(settings.mysql);
+    browser = await puppeteer.launch();
     database.query("SELECT * FROM keywords", function (error, results, fields) {
         if (error) { throw error; }
         keywords = results;
@@ -21,12 +24,12 @@ function setup() {
     });
 }
 
-function start() {
+async function start() {
     console.log("Starting...");
     web.listen(process_mail, 42569);
 }
 
-function process_mail(mail_body) {
+async function process_mail(mail_body) {
     try {
         let links = cheerio('a', mail_body);
         let seen = {};
@@ -44,9 +47,16 @@ function process_mail(mail_body) {
     }
 }
 
-function process_link(link) {
+async function process_link(link) {
     try {
-        console.log(link);
+        console.log("Processing " + link)
+        let page = await browser.newPage();
+        await page.goto(link, { timeout: 0 });
+        let html = await page.content();
+
+        let info = scraping.parse(html, keywords);
+        console.log(info);
+
     } catch (err) {
         console.log(err);
     }
