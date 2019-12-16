@@ -53,9 +53,10 @@ async function process_link(id, link) {
         let page = await browser.newPage();
         await page.goto(link, { timeout: 0 });
         let html = await page.content();
+        page.close();
 
         let info = scraping.parse(html, keywords);
-        insert_new(id, info)
+        insert_new(id, info);
 
     } catch (err) {
         console.error(id, err);
