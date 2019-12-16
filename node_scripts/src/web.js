@@ -2,7 +2,7 @@ const http = require('http');
 
 this.listen = function(callback, port) {
     http.createServer(function(req, res) {
-        console.log("[web] " + req.headers.host + ": " + req.method + " " + req.url);
+        console.log("[web] " + req.connection.remoteAddress + ": " + req.method + " " + req.url);
 
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
