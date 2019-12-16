@@ -11,6 +11,16 @@ let database;
 let keywords;
 let browser;
 
+let queue = [];
+function next() {
+    let item = queue.pop(0);
+    if (item != undefined) {
+        process_link(item.id, item.link);
+    } else {
+        setTimeout(next, 1000);
+    }
+}
+
 async function setup() {
     console.log("Loading...");
     let json = fs.readFileSync("settings.json", "utf8");
@@ -20,6 +30,7 @@ async function setup() {
     database.query("SELECT * FROM keywords", function (error, results, fields) {
         if (error) { throw error; }
         keywords = results;
+        next();
         start();
     });
 }
@@ -39,7 +50,7 @@ async function process_mail(mail_body) {
             let id = url.searchParams.get("p2");
             if (seen[id] == undefined && id != null && id.length == 10) {
                 seen[id] = true;
-                process_link(id, link);
+                queue.push({ id: id, link: link })
             }
         }
     } catch (err) {
@@ -76,10 +87,12 @@ async function insert_new(id, info) {
             database.query("INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?", [ matches ], function (err, result) {
                 if (err) { console.error(id, err); }
                 console.log("Finished " + id);
+                next();
             });
-            
+
         } else {
             console.log("Finished " + id);
+            next();
         }
     });
 }
