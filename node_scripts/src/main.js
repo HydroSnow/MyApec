@@ -77,6 +77,9 @@ async function insert_new(id, info) {
                 if (err) { console.error(id, err); }
                 console.log("Finished " + id);
             });
+            
+        } else {
+            console.log("Finished " + id);
         }
     });
 }
