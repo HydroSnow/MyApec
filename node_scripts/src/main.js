@@ -70,6 +70,7 @@ async function process_link(id, link) {
 
     } catch (err) {
         console.error(id, err);
+        next();
     }
 }
 
