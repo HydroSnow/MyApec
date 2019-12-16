@@ -36,7 +36,6 @@ this.get_skills = function(html, keywords) {
 
     let cells = cheerio('.details-post > p', html);
     let text = get_text(cells).toLowerCase();
-    console.log(text);
 
     let skills = [];
     for (let a = 0; a < keywords.length; a++) {

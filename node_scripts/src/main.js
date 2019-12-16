@@ -39,31 +39,30 @@ async function process_mail(mail_body) {
             let id = url.searchParams.get("p2");
             if (seen[id] == undefined) {
                 seen[id] = true;
-                process_link(link);
+                process_link(id, link);
             }
         }
     } catch (err) {
-        console.log(err);
+        console.error(err);
     }
 }
 
 async function process_link(id, link) {
     try {
-        console.log("Processing " + id)
+        console.log("Processing " + id);
         let page = await browser.newPage();
         await page.goto(link, { timeout: 0 });
         let html = await page.content();
 
         let info = scraping.parse(html, keywords);
-        console.log(info);
-        insert_new(info)
+        insert_new(id, info)
 
     } catch (err) {
-        console.log(err);
+        console.error(id, err);
     }
 }
 
-async function insert_new(info) {
+async function insert_new(id, info) {
     database.query("INSERT INTO offers (`salary`, `experience`, `city`, `date`, `contract`, `society`) VALUES ?", [ [ [
         info.salary, info.experience, info.city, info.date, info.contract, info.society
     ] ] ], function (err, result) {
@@ -74,7 +73,8 @@ async function insert_new(info) {
             matches.push([ result.insertId, x ]);
         });
         database.query("INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?", [ matches ], function (err, result) {
-            if (err) { console.error(err); }
+            if (err) { console.error(id, err); }
+            console.log("Finished " + id);
         });
     });
 }
