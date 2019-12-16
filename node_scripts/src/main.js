@@ -5,9 +5,24 @@ const fs = require('fs');
 
 const web = require('./web.js');
 
+let settings;
+let database;
+let keywords;
+
 function setup() {
-    json = fs.readFileSync("settings.json", "utf8");
+    console.log("Loading...");
+    let json = fs.readFileSync("settings.json", "utf8");
     settings = JSON.parse(json);
+    database = mysql.createPool(settings.mysql);
+    database.query("SELECT * FROM keywords", function (error, results, fields) {
+        if (error) { throw error; }
+        keywords = results;
+        start();
+    });
+}
+
+function start() {
+    console.log("Starting...");
     web.listen(process_mail, 42569);
 }
 
