@@ -27,21 +27,29 @@ function start() {
 }
 
 function process_mail(mail_body) {
-    let links = cheerio('a', mail_body);
-    let seen = {};
-    for (let a = 0; a < links.length; a++) {
-        let link = links[a].attribs.href;
-        let url = new URL(link);
-        let id = url.searchParams.get("p2");
-        if (seen[id] == undefined) {
-            seen[id] = true;
-            process_link(link);
+    try {
+        let links = cheerio('a', mail_body);
+        let seen = {};
+        for (let a = 0; a < links.length; a++) {
+            let link = links[a].attribs.href;
+            let url = new URL(link);
+            let id = url.searchParams.get("p2");
+            if (seen[id] == undefined) {
+                seen[id] = true;
+                process_link(link);
+            }
         }
+    } catch (err) {
+        console.log(err);
     }
 }
 
 function process_link(link) {
-    console.log(link);
+    try {
+        console.log(link);
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 setup();
