@@ -37,7 +37,7 @@ async function process_mail(mail_body) {
             let link = links[a].attribs.href;
             let url = new URL(link);
             let id = url.searchParams.get("p2");
-            if (seen[id] == undefined && id.length == 10) {
+            if (seen[id] == undefined && id != null && id.length == 10) {
                 seen[id] = true;
                 process_link(id, link);
             }
