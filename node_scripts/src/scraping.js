@@ -7,6 +7,9 @@ this.parse = function(html, keywords) {
     parsed.contract = scc.contract;
     parsed.society = scc.society;
     parsed.city = scc.city;
+    let se = this.get_se(html);
+    parsed.salary = se.salary;
+    parsed.experience = se.experience;
     return parsed;
 }
 
@@ -31,4 +34,43 @@ this.get_scc = function(html) {
             city: cells[1].children[0].data
         };
     }
+}
+
+this.get_se = function(html) {
+    let cells = cheerio('.details-post', html);
+    let salary = undefined;
+    let experience = undefined;
+    for (let a = 0; a < cells.length; a++) {
+        let cell = cells[a];
+        let title = cells[a].children[0].children[0].data;
+
+        if (title == "Salaire") {
+            let text = cells[a].children[1].children[0].data;
+            let split = text.replace(/[^0-9]+/g, " ").split(" ");
+            split = split.filter(function(x) { return x != "" });
+            if (split.length == 0) {
+                salary = null;
+            } else {
+                salary = 0;
+                split.forEach(function(x) { salary += parseInt(x); });
+                salary /= split.length;
+            }
+
+        } else if (title == "Expérience") {
+            let text = cells[a].children[1].children[0].data;
+            let split = text.replace(/[^0-9]+/g, " ").split(" ");
+            split = split.filter(function(x) { return x != "" });
+            if (split.length == 0) {
+                experience = null;
+            } else {
+                experience = 0;
+                split.forEach(function(x) { experience += parseInt(x); });
+                experience /= split.length;
+            }
+        }
+    }
+    return {
+        salary: salary,
+        experience: experience
+    };
 }
