@@ -1,6 +1,6 @@
 
 CREATE TABLE `offers` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(16) NOT NULL AUTO_INCREMENT,
   `salary` int(11) DEFAULT NULL,
   `experience` int(11) DEFAULT NULL,
   `city` varchar(256) DEFAULT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE `keywords` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `matches` (
-  `id_offer` int(11) NOT NULL,
+  `id_offer` varchar(16) NOT NULL,
   `id_skill` int(11) NOT NULL,
   PRIMARY KEY (`id_offer`,`id_skill`),
   FOREIGN KEY (`id_offer`) REFERENCES `offers` (`id`),

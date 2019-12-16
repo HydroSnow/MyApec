@@ -64,15 +64,15 @@ async function process_link(id, link) {
 }
 
 async function insert_new(id, info) {
-    database.query("INSERT INTO offers (`salary`, `experience`, `city`, `date`, `contract`, `society`) VALUES ?", [ [ [
-        info.salary, info.experience, info.city, info.date, info.contract, info.society
+    database.query("INSERT INTO offers (`id`, `salary`, `experience`, `city`, `date`, `contract`, `society`) VALUES ?", [ [ [
+        id, info.salary, info.experience, info.city, info.date, info.contract, info.society
     ] ] ], function (err, result) {
         if (err) { console.error(err); }
 
         if (info.skills.length !== 0) {
             let matches = [];
             info.skills.forEach(function(x) {
-                matches.push([ result.insertId, x ]);
+                matches.push([ id, x ]);
             });
             database.query("INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?", [ matches ], function (err, result) {
                 if (err) { console.error(id, err); }
