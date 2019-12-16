@@ -68,14 +68,16 @@ async function insert_new(id, info) {
     ] ] ], function (err, result) {
         if (err) { console.error(err); }
 
-        let matches = [];
-        info.skills.forEach(function(x) {
-            matches.push([ result.insertId, x ]);
-        });
-        database.query("INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?", [ matches ], function (err, result) {
-            if (err) { console.error(id, err); }
-            console.log("Finished " + id);
-        });
+        if (info.skills.length !== 0) {
+            let matches = [];
+            info.skills.forEach(function(x) {
+                matches.push([ result.insertId, x ]);
+            });
+            database.query("INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?", [ matches ], function (err, result) {
+                if (err) { console.error(id, err); }
+                console.log("Finished " + id);
+            });
+        }
     });
 }
 
