@@ -2,7 +2,7 @@
 CREATE TABLE `offers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `salary` int(11) DEFAULT NULL,
-  `experience` int(11) NOT NULL,
+  `experience` int(11) DEFAULT NULL,
   `city` varchar(256) NOT NULL,
   `date` date NOT NULL,
   `contract` varchar(256) NOT NULL,
