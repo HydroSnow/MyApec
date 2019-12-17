@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const mysql = require('mysql');
+const url = require('url');
 const fs = require('fs');
 
 const web = require('./web.js');
@@ -26,25 +27,50 @@ async function setup() {
 
 async function start() {
     console.log("Starting...");
-    web.listen(process_mail, 42569);
-}
 
-async function process_mail(mail_body) {
-    try {
-        let links = cheerio('a', mail_body);
-        let seen = {};
-        for (let a = 0; a < links.length; a++) {
-            let link = links[a].attribs.href;
-            let url = new URL(link);
-            let id = url.searchParams.get("p2");
-            if (seen[id] == undefined && id != null && id.length == 10) {
-                seen[id] = true;
-                process_link(id, link);
+    web.listen(async function (search_link) {
+        try {
+            let page = await browser.newPage();
+            await page.goto(search_link, { timeout: 0 });
+            let html = await page.content();
+            page.close();
+
+            let links = cheerio('.container-result a', html);
+            console.log("Parsed " + links.length + " links from search")
+            let seen = {};
+            for (let a = 0; a < links.length; a++) {
+                let link = links[a].attribs.href;
+                if (link == undefined) { continue; }
+                let id = link.split(/[\/\?]/g)[5];
+                link = url.resolve(search_link, link);
+                if (seen[id] == undefined && id != null && id.length == 10) {
+                    seen[id] = true;
+                    process_link(id, link);
+                }
             }
+        } catch (err) {
+            console.error(err);
         }
-    } catch (err) {
-        console.error(err);
-    }
+    }, 42568);
+
+    web.listen(async function (mail_body) {
+        try {
+            let links = cheerio('a', mail_body);
+            console.log("Parsed " + links.length + " links from mail")
+            let seen = {};
+            for (let a = 0; a < links.length; a++) {
+                let link = links[a].attribs.href;
+                if (link == undefined) { continue; }
+                let id = new URL(link).searchParams.get("p2");
+                if (seen[id] == undefined && id != null && id.length == 10) {
+                    seen[id] = true;
+                    process_link(id, link);
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }, 42569);
 }
 
 async function process_link(id, link) {
