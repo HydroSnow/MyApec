@@ -1,6 +1,6 @@
 
 CREATE TABLE `offers` (
-  `id` varchar(16) NOT NULL AUTO_INCREMENT,
+  `id` varchar(16) NOT NULL,
   `salary` int(11) DEFAULT NULL,
   `experience` int(11) DEFAULT NULL,
   `city` varchar(256) DEFAULT NULL,
