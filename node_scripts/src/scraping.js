@@ -78,24 +78,32 @@ this.get_se = function(html) {
         if (title == "Salaire") {
             let text = cells[a].children[1].children[0].data;
             let split = text.replace(/[^0-9]+/g, " ").split(" ");
-            split = split.filter(function(x) { return x != "" });
+            split = split.filter(function(x) {
+                return x != ""
+            });
             if (split.length == 0) {
                 salary = null;
             } else {
                 salary = 0;
-                split.forEach(function(x) { salary += parseInt(x); });
+                split.forEach(function(x) {
+                    salary += parseInt(x);
+                });
                 salary /= split.length;
             }
 
         } else if (title == "Expérience") {
             let text = cells[a].children[1].children[0].data;
             let split = text.replace(/[^0-9]+/g, " ").split(" ");
-            split = split.filter(function(x) { return x != "" });
+            split = split.filter(function(x) {
+                return x != ""
+            });
             if (split.length == 0) {
                 experience = null;
             } else {
                 experience = 0;
-                split.forEach(function(x) { experience += parseInt(x); });
+                split.forEach(function(x) {
+                    experience += parseInt(x);
+                });
                 experience /= split.length;
             }
         }

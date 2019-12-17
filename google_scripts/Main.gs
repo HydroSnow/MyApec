@@ -20,9 +20,9 @@ function launch() {
 function search() {
     try {
         for (var a = 0; a < 5; a++) {
-    	    var link = "https://www.apec.fr/candidat/recherche-emploi.html/emploi?page=" + a + "&motsCles=d%C3%A9veloppeur";
+            var link = "https://www.apec.fr/candidat/recherche-emploi.html/emploi?page=" + a + "&motsCles=d%C3%A9veloppeur";
             api_send_search(link);
-    	}
+        }
     } catch (err) {
         console.log("Search error: " + err);
     }
