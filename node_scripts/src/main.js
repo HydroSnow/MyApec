@@ -101,6 +101,10 @@ async function process_link(id, link) {
         let html = await page.content();
         page.close();
 
+        var $ = cheerio.load(html);
+        $.root().find('*').contents().filter(function() { return this.type === 'comment'; }).remove();
+        html = $.root().html();
+
         let info = scraping.parse(html, keywords);
         insert_new(id, info);
 

@@ -53,25 +53,17 @@ this.get_skills = function(html, keywords) {
 this.get_scc = function(html) {
     let cells = cheerio('.details-offer-list > li', html);
     if (cells.length == 3) {
-        let society = cells[0].children[0].data;
-        let contract;
-        if (cells[1].children[4].children !== undefined) {
-            contract = cells[1].children[4].children[0].data;
-        } else {
-            contract = cells[1].children[3].children[0].data;
-        }
-        let city = cells[2].children[0].data;
-        return { society: society, contract: contract, city: city };
+        return {
+            society: cells[0].children[0].data,
+            contract: cells[1].children[1].children[0].data,
+            city: cells[2].children[0].data
+        };
     } else {
-        let society = null;
-        let contract;
-        if (cells[0].children[4].children !== undefined) {
-            contract = cells[0].children[4].children[0].data;
-        } else {
-            contract = cells[0].children[3].children[0].data;
-        }
-        let city = cells[1].children[0].data;
-        return { society: society, contract: contract, city: city };
+        return {
+            society: null,
+            contract: cells[0].children[1].children[0].data,
+            city: cells[1].children[0].data
+        };
     }
 }
 
