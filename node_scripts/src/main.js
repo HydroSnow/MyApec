@@ -13,7 +13,7 @@ let keywords;
 let browser;
 
 async function setup() {
-    console.log(new Date(), "Loading...");
+    console.log(new Date().toLocaleString(), "Loading...");
     let json = fs.readFileSync("settings.json", "utf8");
     settings = JSON.parse(json);
     database = mysql.createPool(settings.mysql);
@@ -28,7 +28,7 @@ async function setup() {
 }
 
 async function start() {
-    console.log(new Date(), "Starting...");
+    console.log(new Date().toLocaleString(), "Starting...");
 
     web.listen(async function(search_link) {
         try {
@@ -38,7 +38,7 @@ async function start() {
             page.close();
 
             let links = cheerio('.container-result a', html);
-            console.log(new Date(), "Parsed " + links.length + " links from search")
+            console.log(new Date().toLocaleString(), "Parsed " + links.length + " links from search")
             let seen = {};
             for (let a = 0; a < links.length; a++) {
                 let link = links[a].attribs.href;
@@ -54,20 +54,20 @@ async function start() {
                         if (results.length == 0) {
                             process_link(id, link);
                         } else {
-                            console.log(new Date(), id + " is already recorded");
+                            console.log(new Date().toLocaleString(), id + " is already recorded");
                         }
                     });
                 }
             }
         } catch (error) {
-            console.error(new Date(), error);
+            console.error(new Date().toLocaleString(), error);
         }
     }, 42568);
 
     web.listen(async function(mail_body) {
         try {
             let links = cheerio('a', mail_body);
-            console.log(new Date(), "Parsed " + links.length + " links from mail")
+            console.log(new Date().toLocaleString(), "Parsed " + links.length + " links from mail")
             let seen = {};
             for (let a = 0; a < links.length; a++) {
                 let link = links[a].attribs.href;
@@ -82,20 +82,20 @@ async function start() {
                         if (results.length == 0) {
                             process_link(id, link);
                         } else {
-                            console.log(new Date(), id + " is already recorded");
+                            console.log(new Date().toLocaleString(), id + " is already recorded");
                         }
                     });
                 }
             }
         } catch (error) {
-            console.error(new Date(), error);
+            console.error(new Date().toLocaleString(), error);
         }
     }, 42569);
 }
 
 async function process_link(id, link) {
     try {
-        console.log(new Date(), "Processing " + id);
+        console.log(new Date().toLocaleString(), "Processing " + id);
         let page = await browser.newPage();
         await page.goto(link, { timeout: 0 });
         let html = await page.content();
@@ -109,7 +109,7 @@ async function process_link(id, link) {
         insert_new(id, info);
 
     } catch (error) {
-        console.error(new Date(), id, error);
+        console.error(new Date().toLocaleString(), id, error);
     }
 }
 
@@ -118,7 +118,7 @@ async function insert_new(id, info) {
         sql: "INSERT INTO offers (`id`, `salary`, `experience`, `city`, `date`, `contract`, `society`) VALUES (?, ?, ?, ?, ?, ?, ?)",
         values: [ id, info.salary, info.experience, info.city, info.date, info.contract, info.society ]
     }, function(error, results, fields) {
-        if (error) { console.error(new Date(), id, error); return; }
+        if (error) { console.error(new Date().toLocaleString(), id, error); return; }
 
         if (info.skills.length !== 0) {
             let matches = [];
@@ -129,12 +129,12 @@ async function insert_new(id, info) {
                 sql: "INSERT INTO matches (`id_offer`, `id_skill`) VALUES ?",
                 values: [ matches ]
             }, function(error, results, fields) {
-                if (error) { console.error(new Date(), id, error); return; }
-                console.log(new Date(), "Finished " + id);
+                if (error) { console.error(new Date().toLocaleString(), id, error); return; }
+                console.log(new Date().toLocaleString(), "Finished " + id);
             });
 
         } else {
-            console.log(new Date(), "Finished " + id);
+            console.log(new Date().toLocaleString(), "Finished " + id);
         }
     });
 }
