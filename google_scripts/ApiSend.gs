@@ -1,7 +1,7 @@
-var ip = "149.202.88.197";
+var url = "http://149.202.88.197:42569/myapec";
 
 function api_send_search(link) {
-    var host = 'http://' + ip + ':42568';
+    var host = url + '/search';
     var options = {
         'method': 'post',
         'contentType': 'text/plain',
@@ -11,7 +11,7 @@ function api_send_search(link) {
 }
 
 function api_send_mail(body) {
-    var host = 'http://' + ip + ':42569';
+    var host = url + '/mail';
     var options = {
         'method': 'post',
         'contentType': 'text/html',
