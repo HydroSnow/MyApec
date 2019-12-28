@@ -3,8 +3,15 @@ const cheerio = require('cheerio');
 const mysql = require('mysql');
 const url = require('url');
 const fs = require('fs');
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.raw({
+    inflate: true,
+    limit: '256kb',
+    type: 'text/*'
+}));
 
-const web = require('./web.js');
 const scraping = require('./scraping.js');
 
 let settings;
@@ -27,11 +34,12 @@ async function setup() {
     });
 }
 
-async function start() {
-    console.log(new Date().toLocaleString(), "Starting...");
-
-    web.listen(async function(search_link) {
+    app.post("/myapec/search", async function(req, res) {
         try {
+            res.send("200 SEARCH ROGER");
+
+            let search_link = req.body.toString();
+
             let page = await browser.newPage();
             await page.goto(search_link, { timeout: 0 });
             let html = await page.content();
@@ -62,10 +70,14 @@ async function start() {
         } catch (error) {
             console.error(new Date().toLocaleString(), error);
         }
-    }, 42568);
+    });
 
-    web.listen(async function(mail_body) {
+    app.post("/myapec/mail", async function(req, res) {
         try {
+            res.send("200 MAIL ROGER");
+
+            let mail_body = req.body.toString();
+
             let links = cheerio('a', mail_body);
             console.log(new Date().toLocaleString(), "Parsed " + links.length + " links from mail")
             let seen = {};
@@ -90,7 +102,14 @@ async function start() {
         } catch (error) {
             console.error(new Date().toLocaleString(), error);
         }
-    }, 42569);
+    });
+
+async function start() {
+    console.log(new Date().toLocaleString(), "Starting...");
+
+    app.listen(42569, function() {
+        console.log(new Date().toLocaleString(), "Listening!");
+    });
 }
 
 async function process_link(id, link) {
